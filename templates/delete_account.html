@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Delete Account | TastyShare{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg p-4 text-center">
+                <h2 class="mb-4 text-danger">Delete Account</h2>
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg">Yes, Delete My Account</button>
+                    <a href="{% url 'edit_profile' %}" class="btn btn-secondary btn-lg ms-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

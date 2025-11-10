@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Contact Us | TastyShare{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 text-center"><i class="fas fa-envelope"></i> Contact Us</h2>
+    <p class="text-center mb-4">
+        If you have any questions, suggestions, or need assistance, feel free to reach out to us using the form below 
+        or email us directly at 
+        <a href="mailto:support@tastyshare.app">support@tastyshare.app</a>.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-6 mb-3">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="message">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

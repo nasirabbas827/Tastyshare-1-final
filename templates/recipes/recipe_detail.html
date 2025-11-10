@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ recipe.title }}{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+<div class="row justify-content-center">
+<div class="col-lg-10">
+<div class="card shadow-lg rounded-3 overflow-hidden">
+{% if recipe.image %}
+<img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+{% else %}
+<img src="https://www.google.com/search?q=https://placehold.co/800x600/343a40/ffffff%3Ftext%3DRecipe%2BImage" class="card-img-top" alt="No Image">
+{% endif %}
+<div class="card-body p-md-5">
+<h2 class="card-title display-4 fw-bold mb-3">{{ recipe.title }}</h2>
+<div class="d-flex flex-wrap gap-3 mb-4">
+<span class="badge bg-secondary p-2"><i class="fas fa-tag me-1"></i>{{ recipe.category }}</span>
+<span class="badge bg-primary p-2"><i class="far fa-clock me-1"></i>{{ recipe.cooking_time }} mins</span>
+{% if recipe.user %}
+<span class="badge bg-info p-2 text-white"><i class="fas fa-user-circle me-1"></i>By {{ recipe.user.username }}</span>
+{% endif %}
+</div>
+
+                <h4 class="mt-4 fw-bold">Description</h4>
+                <p class="lead text-muted">{{ recipe.description }}</p>
+
+                <h4 class="mt-4 fw-bold">Ingredients</h4>
+                <ul class="list-group list-group-flush border-top border-bottom mb-4">
+                    {% for ingredient in recipe.ingredients|linebreaksbr %}
+                        {% if ingredient %}
+                            <li class="list-group-item">{{ ingredient|safe }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+                <h4 class="mt-4 fw-bold">Steps</h4>
+                <ul class="list-group list-group-flush border-top border-bottom mb-4">
+                    {% for step in recipe.steps|linebreaksbr %}
+                        {% if step %}
+                            <li class="list-group-item">{{ step|safe }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+                <div class="d-flex justify-content-between align-items-center mt-5">
+                    <a href="{% url 'recipe_list' %}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </a>
+                    {% if recipe.user == request.user %}
+                        <div>
+                            <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-info btn-lg me-2 text-white">
+                                <i class="fas fa-edit me-2"></i>Edit
+                            </a>
+                            <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-danger btn-lg">
+                                <i class="fas fa-trash-alt me-2"></i>Delete
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TastyShare{% endblock %}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <!-- Bootstrap 4.5.2 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #343a40;
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: #ffc107 !important;
+        }
+        .nav-link {
+            color: #ffffff !important;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            color: #ffc107 !important;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: #ced4da;
+            padding: 2rem 0;
+        }
+        footer a {
+            color: #ffc107;
+        }
+        footer a:hover {
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 5px;
+        }
+
+        /* Button */
+        .btn-primary {
+            background: #ffc107;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #e0a800;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}"><i class="fas fa-utensils"></i> TastyShare</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ml-auto">
+                    {% if request.session.user_id %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'edit_profile' %}"><i class="fas fa-user-edit"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'recipe_list' %}"><i class="fas fa-book-open"></i> Recipes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'favorites' %}"><i class="fas fa-heart"></i> Favorites</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="container mt-4 mb-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5><i class="fas fa-utensils"></i> TastyShare</h5>
+                    <p>Discover, create, and share delicious recipes with our vibrant community.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About Us</a></li>
+                        <li><a href="{% url 'terms' %}"><i class="fas fa-file-contract"></i> Terms</a></li>
+                        <li><a href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Connect</h5>
+                    <p>Email: <a href="mailto:support@tastyshare.app">support@tastyshare.app</a></p>
+                    <a href="#"><i class="fab fa-twitter fa-lg mr-2"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f fa-lg mr-2"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in fa-lg mr-2"></i></a>
+                    <a href="#"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                &copy; {% now "Y" %} <strong>TastyShare</strong>. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

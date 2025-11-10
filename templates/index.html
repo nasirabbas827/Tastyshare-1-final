@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}TastyShare - Share & Discover Delicious Recipes{% endblock %}
+
+{% block content %}
+<!-- Jumbotron with Background Image -->
+<div class="jumbotron jumbotron-fluid text-white" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.pexels.com/photos/205961/pexels-photo-205961.jpeg') no-repeat center center; background-size: cover; padding: 6rem 0;">
+    <div class="container text-center">
+        <h1 class="display-3 mb-3"><i class="fas fa-utensils mr-2"></i>Welcome to TastyShare</h1>
+        <p class="lead mb-4">Share your culinary creations, explore community recipes, and find inspiration for your next meal!</p>
+        {% if request.session.user_id %}
+            <p class="mb-4">Welcome back, <strong>{{ request.session.username }}</strong>! Ready to cook something amazing?</p>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg btn-hover">
+                <i class="fas fa-tachometer-alt mr-2"></i>Go to Dashboard
+            </a>
+        {% else %}
+            <p class="mb-4">Join TastyShare to share recipes, discover favorites, and connect with fellow food lovers.</p>
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg btn-hover mr-2">
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
+            </a>
+            <a href="{% url 'register' %}" class="btn btn-success btn-lg btn-hover">
+                <i class="fas fa-user-plus mr-2"></i>Register
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Search & Filter Section -->
+<div class="container my-5">
+    <form method="get" class="row g-3 align-items-center justify-content-center">
+        <div class="col-md-4">
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search recipes by name, ingredients, category...">
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                {% for key, value in categories %}
+                    <option value="{{ key }}" {% if selected_category == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="sort_by" class="form-select">
+                <option value="recent" {% if sort_by == 'recent' %}selected{% endif %}>Sort by Recent</option>
+                <option value="popular" {% if sort_by == 'popular' %}selected{% endif %}>Sort by Popular</option>
+            </select>
+        </div>
+        <div class="col-md-2 text-center">
+            <button type="submit" class="btn btn-primary btn-hover"><i class="fas fa-search me-1"></i>Search</button>
+        </div>
+    </form>
+</div>
+
+<!-- Recipes Section -->
+<div class="container my-5">
+    <h2 class="text-center mb-5"><i class="fas fa-utensils mr-2"></i>Recipes</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for recipe in recipes %}
+        <div class="col">
+            <div class="card h-100 shadow-sm card-hover">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ recipe.title }}">
+                {% else %}
+                    <div class="d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                        <i class="fas fa-camera fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text text-muted mb-auto">{{ recipe.description|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-outline-primary btn-sm btn-hover"><i class="fas fa-eye me-1"></i> View</a>
+                        <span class="badge bg-secondary text-white">{{ recipe.category }}</span>
+                        <span class="badge bg-info text-white">{{ recipe.cooking_time }} mins</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning text-center py-5">
+                <i class="fas fa-utensils fa-3x mb-3"></i>
+                <p class="lead fw-bold">No recipes found!</p>
+                <p class="text-muted">Try adjusting your search or filters.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Retain your Features, Testimonials, and CTA sections here as in original index.html -->
+
+<style>
+    .btn-hover {
+        transition: all 0.3s ease;
+    }
+    .btn-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}{{ recipe.title }} | TastyShare{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+  <!-- Hero Section with Recipe Image & Info -->
+  <div class="row fade-in">
+    <div class="col-md-5 mb-4">
+      <div class="card shadow-lg border-0 rounded-xl card-hover-zoom">
+        {% if recipe.image %}
+        <div class="recipe-img-container">
+          <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="card-img-top recipe-img">
+        </div>
+        {% else %}
+        <div class="recipe-img-container text-center bg-light d-flex align-items-center justify-content-center">
+          <i class="fas fa-camera fa-4x text-muted"></i>
+        </div>
+        {% endif %}
+        <div class="card-body text-center">
+          <h2 class="card-title font-weight-bold" style="font-family: 'Playfair Display', serif; color: #2d3436;">{{ recipe.title }}</h2>
+          <p class="text-muted"><i class="fas fa-tag me-2"></i> <strong>Category:</strong> {{ recipe.category }}</p>
+          <p class="text-muted"><i class="fas fa-clock me-2"></i> <strong>Cooking Time:</strong> {{ recipe.cooking_time }} mins</p>
+          <div class="mt-3">
+            <a href="{% url 'toggle_favorite' recipe.pk %}" 
+               class="btn {% if is_favorite %}btn-danger{% else %}btn-outline-danger{% endif %} btn-hover w-100">
+              <i class="fas fa-heart me-2"></i>
+              {% if is_favorite %} Remove from Favorites {% else %} Add to Favorites {% endif %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recipe Content -->
+    <div class="col-md-7">
+      <div class="card shadow-lg border-0 rounded-xl mb-4">
+        <div class="card-body">
+          <h5 class="font-weight-bold mb-3" style="font-family: 'Playfair Display', serif; color: #2d3436;">
+            <i class="fas fa-align-left text-muted me-2"></i> Description
+          </h5>
+          <p>{{ recipe.description }}</p>
+
+          <h5 class="font-weight-bold mt-4 mb-3" style="font-family: 'Playfair Display', serif; color: #2d3436;">
+            <i class="fas fa-carrot text-muted me-2"></i> Ingredients
+          </h5>
+          <ul class="list-group list-group-flush">
+            {% for ingredient in recipe.ingredients.splitlines %}
+            <li class="list-group-item border-0 py-2">{{ ingredient }}</li>
+            {% endfor %}
+          </ul>
+
+          <h5 class="font-weight-bold mt-4 mb-3" style="font-family: 'Playfair Display', serif; color: #2d3436;">
+            <i class="fas fa-list-ol text-muted me-2"></i> Steps
+          </h5>
+          <ol class="ps-3">
+            {% for step in recipe.steps.splitlines %}
+            <li class="mb-3">{{ step }}</li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="row mt-5 fade-in">
+    <div class="col-12">
+      <div class="card shadow-lg border-0 rounded-xl">
+        <div class="card-body">
+          <h4 class="mb-4" style="font-family: 'Playfair Display', serif; color: #2d3436;">
+            <i class="fas fa-comments text-muted me-2"></i> Comments & Ratings
+          </h4>
+
+          {% if request.session.user_id %}
+          <form method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_rating" class="form-label">Rating</label>
+              {{ form.rating }}
+            </div>
+            <div class="mb-3">
+              <label for="id_text" class="form-label">Comment</label>
+              {{ form.text }}
+            </div>
+            <button type="submit" class="btn btn-primary rounded-pill btn-hover">
+              <i class="fas fa-paper-plane me-2"></i> Post Comment
+            </button>
+          </form>
+          {% else %}
+          <p class="text-muted text-center">
+            <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill btn-hover">
+              <i class="fas fa-sign-in-alt me-2"></i> Login to Comment
+            </a>
+          </p>
+          {% endif %}
+
+          {% for comment in comments %}
+          <div class="media mb-4 p-3 border rounded-xl bg-light comment-hover">
+            <div class="media-body">
+              <h6 class="mt-0 font-weight-bold" style="font-family: 'Playfair Display', serif;">
+                <i class="fas fa-user-circle me-2"></i> {{ comment.user.username }}
+                <span class="text-warning">({{ comment.rating }} ★)</span>
+              </h6>
+              <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+              <p class="mt-2 mb-0">{{ comment.text }}</p>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-muted text-center py-4">
+            <i class="fas fa-comment-slash fa-2x mb-2" style="color: #f1c40f;"></i><br>
+            No comments yet. Be the first to share your thoughts!
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Variables */
+:root {
+  --primary-dark: #2d3436;
+  --accent-yellow: #f1c40f;
+  --light-gray: #f8f9fa;
+  --success: #28a745;
+}
+
+/* Card Hover Zoom */
+.card-hover-zoom {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover-zoom:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+}
+.rounded-xl { border-radius: 1.2rem !important; }
+.recipe-img-container { height: 300px; overflow: hidden; position: relative; }
+.recipe-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.card-hover-zoom:hover .recipe-img { transform: scale(1.1); }
+
+/* Buttons */
+.btn-primary { background-color: var(--accent-yellow); border-color: var(--accent-yellow); color: white; transition: 0.3s; }
+.btn-primary:hover { background-color: #d4ac0d; transform: translateY(-2px); }
+.btn-outline-danger { border-color: #dc3545; color: #dc3545; }
+.btn-outline-danger:hover { background-color: #dc3545; color: white; }
+.btn-danger { background-color: #dc3545; border-color: #dc3545; }
+.btn-danger:hover { background-color: #c82333; transform: translateY(-2px); }
+.btn-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.btn-hover:hover { transform: scale(1.05); box-shadow: 0 6px 15px rgba(241,196,15,0.4) !important; }
+
+/* Form */
+.form-control, .form-select { border-radius: 0.5rem; border: 1px solid #e9ecef; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: border-color 0.3s; }
+.form-control:focus, .form-select:focus { border-color: var(--accent-yellow); box-shadow: 0 0 8px rgba(241,196,15,0.3); }
+.form-label { font-weight: 500; color: var(--primary-dark); }
+
+/* Comments */
+.comment-hover { transition: background 0.3s ease; }
+.comment-hover:hover { background: #f1f3f5 !important; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recipe-img-container { height: 200px; }
+  .card-title { font-size: 1.5rem; }
+  .btn { font-size: 0.9rem; padding: 0.5rem 1rem; }
+}
+</style>
+{% endblock %}
